@@ -1,10 +1,11 @@
 from flask import Flask
-from routes import main_routes
-from config import Config
-from models import db, User
+from backend.routes import main_routes
+from backend.config import Config
+from backend.models import db, User
 from datetime import timedelta
 from werkzeug.security import generate_password_hash
-import os
+from backend.models import db, User, Quote, Product
+
 
 app = Flask(
     __name__,
@@ -12,7 +13,7 @@ app = Flask(
     static_folder="../static"
 )
 
-# SECRET KEY (stable)
+# Stable secret key
 app.secret_key = "vts_super_secret_key_2026"
 
 # Session auto-expire
@@ -45,4 +46,4 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-app = app   # expose for gunicorn
+app = app

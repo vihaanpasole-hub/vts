@@ -2,7 +2,8 @@ import os
 from flask import Blueprint, render_template, request, redirect, session
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
-from models import db, User, Quote, Product
+from backend.models import db, User, Quote, Product
+
 
 main_routes = Blueprint("main_routes", __name__)
 

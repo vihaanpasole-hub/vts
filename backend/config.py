@@ -1,4 +1,6 @@
 import os
+from backend.models import db
+
 
 class Config:
     SECRET_KEY = "vts_secret_123"
