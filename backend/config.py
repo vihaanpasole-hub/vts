@@ -1,10 +1,8 @@
 import os
-from backend.models import db
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-class Config:
-    SECRET_KEY = "vts_secret_123"
-    SQLALCHEMY_DATABASE_URI = "sqlite:///instance/database.db"
+DB_PATH = os.path.join(BASE_DIR, "instance", "database.db")
 
-
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_DATABASE_URI = "sqlite:///" + DB_PATH
+SQLALCHEMY_TRACK_MODIFICATIONS = False
