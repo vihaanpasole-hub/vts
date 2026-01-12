@@ -10,8 +10,10 @@ from backend.models import db, User, Quote, Product
 app = Flask(
     __name__,
     template_folder="../templates",
-    static_folder="../static"
+    static_folder="../static",
+    instance_relative_config=True
 )
+
 
 # Stable secret key
 app.secret_key = "vts_super_secret_key_2026"
