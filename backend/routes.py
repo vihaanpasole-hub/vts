@@ -59,7 +59,14 @@ def dashboard():
 
     quotes = Quote.query.all()
     products = Product.query.all()
-    return render_template("admin.html", quotes=quotes, products=products)
+
+    print("ADMIN PRODUCTS =", products)   # Render logs me dikhega
+
+    return render_template(
+        "admin.html",
+        quotes=quotes,
+        products=products
+    )
 
 # ---------------- LOGOUT ----------------
 @main_routes.route("/logout")
