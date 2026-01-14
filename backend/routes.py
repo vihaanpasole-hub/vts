@@ -124,3 +124,26 @@ def quote():
 def product_detail(id):
     product = Product.query.get(id)
     return render_template("product_detail.html", p=product)
+
+# ---------------- DELETE PRODUCT ----------------
+@main_routes.route("/delete-product/<int:id>", methods=["POST"])
+def delete_product(id):
+    if "user" not in session:
+        return redirect("/login")
+
+    product = Product.query.get_or_404(id)
+
+    # (optional) image file delete
+    if product.image:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        upload_folder = os.path.join(base_dir, "static", "uploads")
+        image_path = os.path.join(upload_folder, product.image)
+
+        if os.path.exists(image_path):
+            os.remove(image_path)
+
+    db.session.delete(product)
+    db.session.commit()
+
+    return redirect("/dashboard")
+
