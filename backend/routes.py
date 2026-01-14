@@ -1,19 +1,14 @@
 import os
-from supabase import create_client
 import uuid
 from flask import Blueprint, render_template, request, redirect, session
 from werkzeug.security import check_password_hash
 from backend.models import db, User, Quote, Product
 from supabase import create_client
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY")
-
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
 
 # ---------------- SUPABASE ----------------
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 main_routes = Blueprint("main_routes", __name__)
@@ -85,11 +80,10 @@ def add_product():
     if request.method == "POST":
         file = request.files["image"]
 
-        import uuid
         ext = os.path.splitext(file.filename)[1]
         filename = str(uuid.uuid4()) + ext
 
-        # upload to Supabase
+        # Upload to Supabase
         supabase.storage.from_("product-images").upload(
             filename,
             file.read(),
@@ -110,7 +104,6 @@ def add_product():
 
     return render_template("add_product.html")
 
-
 # ---------------- EDIT PRODUCT ----------------
 @main_routes.route("/edit-product/<int:id>", methods=["GET", "POST"])
 def edit_product(id):
@@ -129,8 +122,13 @@ def edit_product(id):
             ext = os.path.splitext(file.filename)[1]
             filename = str(uuid.uuid4()) + ext
 
-            supabase.storage.from_("product-images").upload(filename, file)
-            product.image = f"{SUPABASE_URL}/storage/v1/object/public/product-images/{filename}"
+            supabase.storage.from_("product-images").upload(
+                filename,
+                file.read(),
+                {"content-type": file.content_type}
+            )
+
+            product.image = filename
 
         db.session.commit()
         return redirect("/dashboard")
@@ -165,5 +163,5 @@ def quote():
 # ---------------- PRODUCT DETAIL ----------------
 @main_routes.route("/product/<int:id>")
 def product_detail(id):
-    product = Product.query.get(id)
+    product = Product.query.get_or_404(id)
     return render_template("product_detail.html", p=product)
