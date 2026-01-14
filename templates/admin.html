@@ -4,66 +4,106 @@
 <title>VTS Admin</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gradient-to-br from-black via-gray-900 to-black text-white">
 
 <div class="flex min-h-screen">
 
-<!-- Sidebar -->
-<div class="w-64 bg-black/60 backdrop-blur-xl border-r border-gray-800 p-6">
+<!-- SIDEBAR -->
+<div class="w-64 bg-black/70 border-r border-gray-800 p-6">
   <h1 class="text-2xl font-bold text-green-400 mb-10">VTS Admin</h1>
 
   <nav class="space-y-4 text-gray-300">
-    <a href="/admin" class="flex items-center gap-3 hover:text-green-400">
-      📊 Dashboard
-    </a>
-    <a href="/add-product" class="flex items-center gap-3 hover:text-green-400">
-      📦 Add Product
-    </a>
-    <a href="/products-page" class="flex items-center gap-3 hover:text-green-400">
-      🛒 Products
-    </a>
-    <a href="/quote" class="flex items-center gap-3 hover:text-green-400">
-      📩 Quotes
-    </a>
-    <a href="/logout" class="flex items-center gap-3 text-red-400">
-      🚪 Logout
-    </a>
+    <a href="/dashboard" class="block hover:text-green-400">📊 Dashboard</a>
+    <a href="/add-product" class="block hover:text-green-400">📦 Add Product</a>
+    <a href="/products-page" class="block hover:text-green-400">🛒 Products</a>
+    <a href="/quote" class="block hover:text-green-400">📩 Quotes</a>
+    <a href="/logout" class="block text-red-400">🚪 Logout</a>
   </nav>
 </div>
 
-<!-- Main -->
+<!-- MAIN -->
 <div class="flex-1 p-10">
 
-  <!-- Top Bar -->
+  <!-- TOP -->
   <div class="flex justify-between items-center mb-10">
     <h2 class="text-3xl font-bold">Dashboard</h2>
     <span class="text-gray-400">Vaishnavi Time Solutions</span>
   </div>
 
-  <!-- Stats -->
+  <!-- STATS -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-    <div class="bg-white/5 backdrop-blur p-6 rounded-xl border border-gray-800 shadow-xl">
+    <div class="bg-white/5 p-6 rounded-xl border border-gray-800">
       <p class="text-gray-400">Total Leads</p>
       <h2 class="text-4xl text-green-400 font-bold">{{ quotes|length }}</h2>
     </div>
 
-    <div class="bg-white/5 backdrop-blur p-6 rounded-xl border border-gray-800 shadow-xl">
-      <p class="text-gray-400">Active Brands</p>
-      <h2 class="text-4xl text-green-400 font-bold">5</h2>
+    <div class="bg-white/5 p-6 rounded-xl border border-gray-800">
+      <p class="text-gray-400">Total Products</p>
+      <h2 class="text-4xl text-green-400 font-bold">{{ products|length }}</h2>
     </div>
 
-    <div class="bg-white/5 backdrop-blur p-6 rounded-xl border border-gray-800 shadow-xl">
+    <div class="bg-white/5 p-6 rounded-xl border border-gray-800">
       <p class="text-gray-400">System</p>
       <h2 class="text-4xl text-green-400 font-bold">Online</h2>
     </div>
   </div>
 
-  <!-- Leads -->
-  <div class="bg-white/5 backdrop-blur border border-gray-800 rounded-xl p-6 shadow-xl">
-    <h3 class="text-xl mb-6">Customer Enquiries</h3>
+  <!-- LEADS -->
+  <div class="bg-white/5 border border-gray-800 rounded-xl p-6 mb-10">
+    <h3 class="text-xl mb-4 text-green-400">Customer Enquiries</h3>
 
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead>
-          <tr class="text-gray-400 border-b border-gray-700">
-            <th class="py-2
+    <table class="w-full text-sm">
+      <tr class="text-gray-400 border-b border-gray-700">
+        <th class="py-2 text-left">Name</th>
+        <th class="py-2 text-left">Phone</th>
+        <th class="py-2 text-left">Message</th>
+      </tr>
+
+      {% for q in quotes %}
+      <tr class="border-b border-gray-800">
+        <td class="py-2">{{ q.name }}</td>
+        <td class="py-2">{{ q.phone }}</td>
+        <td class="py-2">{{ q.message }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="bg-white/5 border border-gray-800 rounded-xl p-6">
+    <h3 class="text-xl mb-4 text-green-400">Products</h3>
+
+    <table class="w-full text-sm">
+      <tr class="text-gray-400 border-b border-gray-700">
+        <th class="py-2 text-left">Image</th>
+        <th class="py-2 text-left">Brand</th>
+        <th class="py-2 text-left">Name</th>
+        <th class="py-2 text-left">Action</th>
+      </tr>
+
+      {% for p in products %}
+      <tr class="border-b border-gray-800">
+        <td class="py-2">
+          <img src="/static/uploads/{{ p.image }}" class="h-12 rounded">
+        </td>
+        <td class="py-2">{{ p.brand }}</td>
+        <td class="py-2">{{ p.name }}</td>
+        <td class="py-2">
+          <form action="/delete-product/{{ p.id }}" method="POST"
+                onsubmit="return confirm('Delete this product?');">
+            <button class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">
+              Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>
