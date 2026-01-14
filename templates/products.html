@@ -51,6 +51,9 @@
 let allProducts = [];
 let currentBrand = "All";
 
+const SUPABASE_URL = "https://vvphwnprqyjxjvtstadf.supabase.co";
+const BUCKET = "product-images";
+
 function loadProducts(){
  fetch("/api/products")
  .then(res=>res.json())
@@ -72,8 +75,12 @@ function filterBrand(brand){
 function render(list){
  let html="";
  list.forEach(p=>{
-   let img = p.image ? "/static/uploads/"+p.image : "https://source.unsplash.com/600x400/?biometric,scanner";
-   let wa = `https://wa.me/919999999999?text=${encodeURIComponent("I am interested in "+p.brand+" "+p.name)}`;
+
+   let img = p.image
+     ? `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${p.image}`
+     : "https://source.unsplash.com/600x400/?biometric,scanner";
+
+   let wa = `https://wa.me/919818536810?text=${encodeURIComponent("I am interested in " + p.brand + " " + p.name)}`;
 
    html += `
     <div class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition">
@@ -97,7 +104,6 @@ function render(list){
 }
 
 loadProducts();
-
 </script>
 
 </body>
