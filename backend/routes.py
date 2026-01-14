@@ -1,13 +1,18 @@
 import os
+import uuid
 from flask import Blueprint, render_template, request, redirect, session
 from werkzeug.security import check_password_hash
-from werkzeug.utils import secure_filename
 from backend.models import db, User, Quote, Product
+from supabase import create_client
 
+# ---------------- SUPABASE ----------------
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 main_routes = Blueprint("main_routes", __name__)
 
-# ---------------- ADMIN GATE (BLOCK DIRECT /admin) ----------------
+# ---------------- ADMIN GATE ----------------
 @main_routes.route("/admin")
 def admin_gate():
     return redirect("/login")
@@ -17,7 +22,7 @@ def admin_gate():
 def home():
     return render_template("index.html")
 
-# ---------------- PRODUCTS PAGE ----------------
+# ---------------- PRODUCTS ----------------
 @main_routes.route("/products-page")
 def products_page():
     return render_template("products.html")
@@ -43,15 +48,13 @@ def api_products():
 def login():
     if request.method == "POST":
         user = User.query.filter_by(username=request.form.get("username")).first()
-
         if user and check_password_hash(user.password, request.form.get("password")):
             session.clear()
             session["user"] = user.username
             return redirect("/dashboard")
-
     return render_template("login.html")
 
-# ---------------- REAL ADMIN PANEL ----------------
+# ---------------- DASHBOARD ----------------
 @main_routes.route("/dashboard")
 def dashboard():
     if "user" not in session:
@@ -59,14 +62,7 @@ def dashboard():
 
     quotes = Quote.query.all()
     products = Product.query.all()
-
-    print("ADMIN PRODUCTS =", products)   # Render logs me dikhega
-
-    return render_template(
-        "admin.html",
-        quotes=quotes,
-        products=products
-    )
+    return render_template("admin.html", quotes=quotes, products=products)
 
 # ---------------- LOGOUT ----------------
 @main_routes.route("/logout")
@@ -83,27 +79,62 @@ def add_product():
     if request.method == "POST":
         file = request.files["image"]
 
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        upload_folder = os.path.join(base_dir, "static", "uploads")
+        ext = os.path.splitext(file.filename)[1]
+        filename = str(uuid.uuid4()) + ext
 
-        if not os.path.exists(upload_folder):
-            os.makedirs(upload_folder)
+        # Upload to Supabase
+        supabase.storage.from_("product-images").upload(filename, file)
 
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(upload_folder, filename)
-        file.save(file_path)
+        image_url = f"{SUPABASE_URL}/storage/v1/object/public/product-images/{filename}"
 
         p = Product(
             brand=request.form["brand"],
             name=request.form["name"],
             description=request.form["description"],
-            image=filename
+            image=image_url
         )
         db.session.add(p)
         db.session.commit()
         return redirect("/dashboard")
 
     return render_template("add_product.html")
+
+# ---------------- EDIT PRODUCT ----------------
+@main_routes.route("/edit-product/<int:id>", methods=["GET", "POST"])
+def edit_product(id):
+    if "user" not in session:
+        return redirect("/login")
+
+    product = Product.query.get_or_404(id)
+
+    if request.method == "POST":
+        product.brand = request.form["brand"]
+        product.name = request.form["name"]
+        product.description = request.form["description"]
+
+        if "image" in request.files and request.files["image"].filename != "":
+            file = request.files["image"]
+            ext = os.path.splitext(file.filename)[1]
+            filename = str(uuid.uuid4()) + ext
+
+            supabase.storage.from_("product-images").upload(filename, file)
+            product.image = f"{SUPABASE_URL}/storage/v1/object/public/product-images/{filename}"
+
+        db.session.commit()
+        return redirect("/dashboard")
+
+    return render_template("edit_product.html", p=product)
+
+# ---------------- DELETE PRODUCT ----------------
+@main_routes.route("/delete-product/<int:id>", methods=["POST"])
+def delete_product(id):
+    if "user" not in session:
+        return redirect("/login")
+
+    product = Product.query.get_or_404(id)
+    db.session.delete(product)
+    db.session.commit()
+    return redirect("/dashboard")
 
 # ---------------- QUOTE ----------------
 @main_routes.route("/quote", methods=["GET", "POST"])
@@ -124,64 +155,3 @@ def quote():
 def product_detail(id):
     product = Product.query.get(id)
     return render_template("product_detail.html", p=product)
-
-# ---------------- DELETE PRODUCT ----------------
-@main_routes.route("/delete-product/<int:id>", methods=["POST"])
-def delete_product(id):
-    if "user" not in session:
-        return redirect("/login")
-
-    product = Product.query.get_or_404(id)
-
-    # (optional) image file delete
-    if product.image:
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        upload_folder = os.path.join(base_dir, "static", "uploads")
-        image_path = os.path.join(upload_folder, product.image)
-
-        if os.path.exists(image_path):
-            os.remove(image_path)
-
-    db.session.delete(product)
-    db.session.commit()
-
-    return redirect("/dashboard")
-
-# ---------------- EDIT PRODUCT ----------------
-@main_routes.route("/edit-product/<int:id>", methods=["GET", "POST"])
-def edit_product(id):
-    if "user" not in session:
-        return redirect("/login")
-
-    product = Product.query.get_or_404(id)
-
-    if request.method == "POST":
-        product.brand = request.form["brand"]
-        product.name = request.form["name"]
-        product.description = request.form["description"]
-
-        if "image" in request.files and request.files["image"].filename != "":
-            file = request.files["image"]
-
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            upload_folder = os.path.join(base_dir, "static", "uploads")
-
-            import uuid
-            ext = os.path.splitext(file.filename)[1]
-            filename = str(uuid.uuid4()) + ext
-
-            file_path = os.path.join(upload_folder, filename)
-            file.save(file_path)
-
-            product.image = filename
-
-        db.session.commit()
-        return redirect("/dashboard")
-
-    return render_template("edit_product.html", p=product)
-
-
-
-
-
-
