@@ -1,9 +1,15 @@
 import os
+from supabase import create_client
 import uuid
 from flask import Blueprint, render_template, request, redirect, session
 from werkzeug.security import check_password_hash
 from backend.models import db, User, Quote, Product
 from supabase import create_client
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 # ---------------- SUPABASE ----------------
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -79,25 +85,31 @@ def add_product():
     if request.method == "POST":
         file = request.files["image"]
 
+        import uuid
         ext = os.path.splitext(file.filename)[1]
         filename = str(uuid.uuid4()) + ext
 
-        # Upload to Supabase
-        supabase.storage.from_("product-images").upload(filename, file)
-
-        image_url = f"{SUPABASE_URL}/storage/v1/object/public/product-images/{filename}"
+        # upload to Supabase
+        supabase.storage.from_("product-images").upload(
+            filename,
+            file.read(),
+            {"content-type": file.content_type}
+        )
 
         p = Product(
             brand=request.form["brand"],
             name=request.form["name"],
             description=request.form["description"],
-            image=image_url
+            image=filename
         )
+
         db.session.add(p)
         db.session.commit()
+
         return redirect("/dashboard")
 
     return render_template("add_product.html")
+
 
 # ---------------- EDIT PRODUCT ----------------
 @main_routes.route("/edit-product/<int:id>", methods=["GET", "POST"])
