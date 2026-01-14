@@ -147,3 +147,37 @@ def delete_product(id):
 
     return redirect("/dashboard")
 
+# ---------------- EDIT PRODUCT ----------------
+@main_routes.route("/edit-product/<int:id>", methods=["GET", "POST"])
+def edit_product(id):
+    if "user" not in session:
+        return redirect("/login")
+
+    product = Product.query.get_or_404(id)
+
+    if request.method == "POST":
+        product.brand = request.form["brand"]
+        product.name = request.form["name"]
+        product.description = request.form["description"]
+
+        if "image" in request.files and request.files["image"].filename != "":
+            file = request.files["image"]
+
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            upload_folder = os.path.join(base_dir, "static", "uploads")
+
+            import uuid
+            ext = os.path.splitext(file.filename)[1]
+            filename = str(uuid.uuid4()) + ext
+
+            file_path = os.path.join(upload_folder, filename)
+            file.save(file_path)
+
+            product.image = filename
+
+        db.session.commit()
+        return redirect("/dashboard")
+
+    return render_template("edit_product.html", p=product)
+
+
