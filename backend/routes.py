@@ -9,6 +9,9 @@ from supabase import create_client
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError("SUPABASE_URL or SUPABASE_KEY is missing in Render Environment Variables")
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 main_routes = Blueprint("main_routes", __name__)
@@ -83,7 +86,6 @@ def add_product():
         ext = os.path.splitext(file.filename)[1]
         filename = str(uuid.uuid4()) + ext
 
-        # Upload to Supabase
         supabase.storage.from_("product-images").upload(
             filename,
             file.read(),
@@ -99,7 +101,6 @@ def add_product():
 
         db.session.add(p)
         db.session.commit()
-
         return redirect("/dashboard")
 
     return render_template("add_product.html")
