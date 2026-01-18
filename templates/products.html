@@ -1,17 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Products | Vaishnavi Time Solutions</title>
-<script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7Z1BV0M0DT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-7Z1BV0M0DT');
-</script>
+  <title>Products | Vaishnavi Time Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-900">
@@ -45,7 +36,9 @@
 </div>
 
 <!-- Products -->
-<div id="product-list" class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 px-6 pb-32"></div>
+<div id="product-list"
+  class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 px-6 pb-32">
+</div>
 
 <style>
 .brand{
@@ -53,7 +46,10 @@
   border-radius:999px;
   background:#e5e7eb;
 }
-.brand:hover{ background:#111827; color:white;}
+.brand:hover{
+  background:#111827;
+  color:white;
+}
 </style>
 
 <script>
@@ -64,52 +60,62 @@ const SUPABASE_URL = "https://vvphwnprqyjxjvtstadf.supabase.co";
 const BUCKET = "product-images";
 
 function loadProducts(){
- fetch("/api/products")
- .then(res=>res.json())
- .then(data=>{
-   allProducts = data.products;
-   filterBrand(currentBrand);
- });
+  fetch("/api/products")
+    .then(res => res.json())
+    .then(data => {
+      allProducts = data.products;
+      filterBrand(currentBrand);
+    });
 }
 
 function filterBrand(brand){
- currentBrand = brand;
- if(brand=="All"){
-   render(allProducts);
- }else{
-   render(allProducts.filter(p => p.brand.toLowerCase().includes(brand.toLowerCase())));
- }
+  currentBrand = brand;
+  if(brand === "All"){
+    render(allProducts);
+  } else {
+    render(
+      allProducts.filter(p =>
+        p.brand.toLowerCase().includes(brand.toLowerCase())
+      )
+    );
+  }
 }
 
 function render(list){
- let html="";
- list.forEach(p=>{
+  let html = "";
 
-   let img = p.image
-     ? `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${p.image}`
-     : "https://source.unsplash.com/600x400/?biometric,scanner";
+  list.forEach(p => {
+    let img = (p.image && p.image.startsWith("http"))
+      ? p.image
+      : `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${p.image}`;
 
-   let wa = `https://wa.me/919818536810?text=${encodeURIComponent("I am interested in " + p.brand + " " + p.name)}`;
+    let wa = `https://wa.me/919818536810?text=${encodeURIComponent(
+      "I am interested in " + p.brand + " " + p.name
+    )}`;
 
-   html += `
-    <div class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition">
-      <img src="${img}" class="w-full h-64 object-contain bg-white p-6">
-      <div class="p-6">
-        <span class="text-sm text-gray-400">${p.brand}</span>
-        <h3 class="text-xl font-semibold mt-1">
-          <a href="/product/${p.id}">${p.name}</a>
-        </h3>
-        <p class="text-gray-500 mt-2">${p.description}</p>
+    html += `
+      <div class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition">
+        <img src="${img}"
+             class="w-full h-64 object-contain bg-white p-4"
+             onerror="this.src='https://source.unsplash.com/600x400/?biometric,scanner'">
 
-        <a href="${wa}" target="_blank"
-          class="inline-block mt-5 text-blue-600 font-semibold hover:underline">
-          Get a Quote →
-        </a>
+        <div class="p-6">
+          <span class="text-sm text-gray-400">${p.brand}</span>
+          <h3 class="text-xl font-semibold mt-1">
+            <a href="/product/${p.id}">${p.name}</a>
+          </h3>
+          <p class="text-gray-500 mt-2">${p.description}</p>
+
+          <a href="${wa}" target="_blank"
+             class="inline-block mt-5 text-blue-600 font-semibold hover:underline">
+            Get a Quote →
+          </a>
+        </div>
       </div>
-    </div>
-   `;
- });
- document.getElementById("product-list").innerHTML = html;
+    `;
+  });
+
+  document.getElementById("product-list").innerHTML = html;
 }
 
 loadProducts();
