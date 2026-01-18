@@ -161,8 +161,23 @@ def quote():
         return redirect("/")
     return render_template("quote.html")
 
+
 # ---------------- PRODUCT DETAIL ----------------
 @main_routes.route("/product/<int:id>")
 def product_detail(id):
     product = Product.query.get_or_404(id)
-    return render_template("product_detail.html", p=product)
+
+    # IMAGE URL BUILD (SINGLE SOURCE OF TRUTH)
+    if product.image and product.image.startswith("http"):
+        image_url = product.image
+    else:
+        image_url = (
+            f"{SUPABASE_URL}/storage/v1/object/public/"
+            f"product-images/{product.image}"
+        )
+
+    return render_template(
+        "product_detail.html",
+        p=product,
+        image_url=image_url
+    )
