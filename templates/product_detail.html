@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ product.name }} | Vaishnavi Time Solutions</title>
+  <title>{{ p.name }} | Vaishnavi Time Solutions</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -15,7 +15,7 @@
   <div class="bg-white rounded-2xl shadow-lg p-6">
     <img
       src="{{ image_url }}"
-      alt="{{ product.name }}"
+      alt="{{ p.name }}"
       class="w-full h-[380px] object-contain hover:scale-105 transition duration-300"
     >
   </div>
@@ -23,15 +23,15 @@
   <!-- INFO -->
   <div>
     <h1 class="text-3xl font-bold text-gray-800">
-      {{ product.name }}
+      {{ p.name }}
     </h1>
 
     <p class="text-sm text-gray-500 mt-1">
-      Brand: {{ product.brand }}
+      Brand: {{ p.brand }}
     </p>
 
     <p class="mt-4 text-gray-600 leading-relaxed">
-      {{ product.description }}
+      {{ p.description }}
     </p>
 
     <a href="/quote"
@@ -42,19 +42,23 @@
 
 </div>
 
-<!-- ================= SPECIFICATIONS ================= -->
+<!-- ================= SPECIFICATIONS (SAFE) ================= -->
 <div class="max-w-7xl mx-auto px-6 mt-10">
   <h2 class="text-2xl font-bold text-gray-800 mb-4">
     Specifications
   </h2>
 
+  {% if p.specifications %}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {% for spec in product.specifications.split('\n') %}
+    {% for spec in p.specifications.split('\n') %}
     <div class="bg-white p-4 rounded-lg shadow border">
       <p class="text-gray-700">{{ spec }}</p>
     </div>
     {% endfor %}
   </div>
+  {% else %}
+    <p class="text-gray-500">Specifications will be updated soon.</p>
+  {% endif %}
 </div>
 
 <!-- ================= APPLICATIONS ================= -->
