@@ -34,31 +34,16 @@
       {{ p.description }}
     </p>
 
-    <a href="/quote"
-       class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold shadow">
-      Get a Quote
+    <!-- ================= WHATSAPP QUOTE BUTTON ================= -->
+    <a
+      href="https://wa.me/919818536810?text=Hello%20Vaishnavi%20Time%20Solutions,%0A%0AI%20am%20interested%20in%20this%20product:%0A%0AProduct:%20{{ p.name }}%0ABrand:%20{{ p.brand }}%0A%0APlease%20contact%20me."
+      target="_blank"
+      class="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-semibold shadow"
+    >
+      Get a Quote (WhatsApp)
     </a>
   </div>
 
-</div>
-
-<!-- ================= SPECIFICATIONS (SAFE) ================= -->
-<div class="max-w-7xl mx-auto px-6 mt-10">
-  <h2 class="text-2xl font-bold text-gray-800 mb-4">
-    Specifications
-  </h2>
-
-  {% if p.specifications %}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {% for spec in p.specifications.split('\n') %}
-    <div class="bg-white p-4 rounded-lg shadow border">
-      <p class="text-gray-700">{{ spec }}</p>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-    <p class="text-gray-500">Specifications will be updated soon.</p>
-  {% endif %}
 </div>
 
 <!-- ================= APPLICATIONS ================= -->
@@ -77,10 +62,13 @@
   </div>
 </div>
 
-<!-- ================= FLOATING CTA ================= -->
-<a href="/quote"
-   class="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-lg">
-  Get Quote
+<!-- ================= FLOATING WHATSAPP BUTTON ================= -->
+<a
+  href="https://wa.me/919818536810?text=Hello%20Vaishnavi%20Time%20Solutions,%0A%0AI%20am%20interested%20in%20this%20product:%0A%0AProduct:%20{{ p.name }}"
+  target="_blank"
+  class="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-lg"
+>
+  WhatsApp
 </a>
 
 </body>
