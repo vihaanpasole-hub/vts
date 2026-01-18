@@ -2,71 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ p.name }} | Vaishnavi Time Solutions</title>
-
+  <title>{{ product.name }} | Vaishnavi Time Solutions</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Z1BV0M0DT"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-7Z1BV0M0DT');
-  </script>
 </head>
 
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gray-100">
 
-<!-- ================= TOP BAR ================= -->
-<div class="bg-white shadow-sm">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <a href="/" class="text-xl font-semibold">
-      Vaishnavi Time Solutions
-    </a>
-    <a href="/products-page" class="text-gray-600 hover:text-black">
-      ← Back to Products
-    </a>
-  </div>
-</div>
+<!-- ================= MAIN PRODUCT SECTION ================= -->
+<div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
 
-<!-- ================= MAIN CONTENT ================= -->
-<div class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-16 items-center">
-
-  <!-- ===== IMAGE ===== -->
-  <div class="bg-white rounded-3xl shadow p-10 flex justify-center items-center">
+  <!-- IMAGE -->
+  <div class="bg-white rounded-2xl shadow-lg p-6">
     <img
-      src="{{ p.image }}"
-      alt="{{ p.name }}"
-      class="w-full h-96 object-contain"
-      onerror="this.src='https://source.unsplash.com/600x600/?biometric,scanner'"
+      src="{{ image_url }}"
+      alt="{{ product.name }}"
+      class="w-full h-[380px] object-contain hover:scale-105 transition duration-300"
     >
   </div>
 
-  <!-- ===== DETAILS ===== -->
+  <!-- INFO -->
   <div>
-    <span class="text-gray-500 uppercase tracking-wide">
-      {{ p.brand }}
-    </span>
-
-    <h1 class="text-4xl font-bold mt-2">
-      {{ p.name }}
+    <h1 class="text-3xl font-bold text-gray-800">
+      {{ product.name }}
     </h1>
 
-    <p class="mt-6 text-gray-600 leading-relaxed whitespace-pre-line">
-      {{ p.description }}
+    <p class="text-sm text-gray-500 mt-1">
+      Brand: {{ product.brand }}
     </p>
 
-    <a
-      target="_blank"
-      href="https://wa.me/919818536810?text=I%20am%20interested%20in%20{{ p.brand }}%20{{ p.name }}"
-      class="inline-block mt-10 bg-black text-white px-10 py-4 rounded-full text-lg hover:bg-gray-800 transition"
-    >
-      Get Quote on WhatsApp
+    <p class="mt-4 text-gray-600 leading-relaxed">
+      {{ product.description }}
+    </p>
+
+    <a href="/quote"
+       class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold shadow">
+      Get a Quote
     </a>
   </div>
 
 </div>
+
+<!-- ================= SPECIFICATIONS ================= -->
+<div class="max-w-7xl mx-auto px-6 mt-10">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">
+    Specifications
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for spec in product.specifications.split('\n') %}
+    <div class="bg-white p-4 rounded-lg shadow border">
+      <p class="text-gray-700">{{ spec }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ================= APPLICATIONS ================= -->
+<div class="bg-gray-200 mt-12 py-10">
+  <div class="max-w-7xl mx-auto px-6">
+    <h2 class="text-2xl font-bold mb-4">Applications</h2>
+
+    <ul class="grid grid-cols-1 md:grid-cols-3 gap-3 text-gray-700">
+      <li>✔ Offices</li>
+      <li>✔ Factories</li>
+      <li>✔ Schools & Colleges</li>
+      <li>✔ Hospitals</li>
+      <li>✔ Construction Sites</li>
+      <li>✔ Corporate Buildings</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= FLOATING CTA ================= -->
+<a href="/quote"
+   class="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-lg">
+  Get Quote
+</a>
 
 </body>
 </html>
