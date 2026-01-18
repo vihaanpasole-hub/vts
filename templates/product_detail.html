@@ -1,37 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>{{ p.name }} | Vaishnavi Time Solutions</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Z1BV0M0DT"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7Z1BV0M0DT');
+  </script>
 </head>
 
 <body class="bg-gray-100 text-gray-900">
 
-<!-- Top bar -->
+<!-- ================= TOP BAR ================= -->
 <div class="bg-white shadow-sm">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between">
-    <a href="/" class="text-xl font-semibold">Vaishnavi Time Solutions</a>
-    <a href="/products-page" class="text-gray-600 hover:text-black">← Back to Products</a>
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <a href="/" class="text-xl font-semibold">
+      Vaishnavi Time Solutions
+    </a>
+    <a href="/products-page" class="text-gray-600 hover:text-black">
+      ← Back to Products
+    </a>
   </div>
 </div>
 
-<!-- Main -->
+<!-- ================= MAIN CONTENT ================= -->
 <div class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-16 items-center">
 
-  <!-- Image -->
-  <div class="bg-white rounded-3xl shadow p-10 flex justify-center">
+  <!-- ===== IMAGE ===== -->
+  <div class="bg-white rounded-3xl shadow p-10 flex justify-center items-center">
     <img
-  src="/static/uploads/{{ p.image }}"
-  onerror="this.src='https://source.unsplash.com/600x600/?biometric,scanner'"
-  class="w-full h-96 object-contain"
->
-
+      src="{{ p.image }}"
+      alt="{{ p.name }}"
+      class="w-full h-96 object-contain"
+      onerror="this.src='https://source.unsplash.com/600x600/?biometric,scanner'"
+    >
   </div>
 
-  <!-- Details -->
+  <!-- ===== DETAILS ===== -->
   <div>
-    <span class="text-gray-500">{{ p.brand }}</span>
-    <h1 class="text-4xl font-bold mt-2">{{ p.name }}</h1>
+    <span class="text-gray-500 uppercase tracking-wide">
+      {{ p.brand }}
+    </span>
+
+    <h1 class="text-4xl font-bold mt-2">
+      {{ p.name }}
+    </h1>
 
     <p class="mt-6 text-gray-600 leading-relaxed whitespace-pre-line">
       {{ p.description }}
@@ -40,7 +60,8 @@
     <a
       target="_blank"
       href="https://wa.me/919818536810?text=I%20am%20interested%20in%20{{ p.brand }}%20{{ p.name }}"
-      class="inline-block mt-10 bg-black text-white px-10 py-4 rounded-full text-lg">
+      class="inline-block mt-10 bg-black text-white px-10 py-4 rounded-full text-lg hover:bg-gray-800 transition"
+    >
       Get Quote on WhatsApp
     </a>
   </div>
