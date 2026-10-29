@@ -4,3 +4,4 @@ werkzeug
 gunicorn
 psycopg2-binary
 supabase
+psycopg[binary]
